@@ -1,13 +1,23 @@
 // This is /routes/sso.js
-var saml = require('express-saml2');
+var saml = require('samlify');
 var express = require('express');
+var path = require('path');
+var fs = require('fs');
 var router = express.Router();
-var ServiceProvider = saml.ServiceProvider;
-var IdentityProvider = saml.IdentityProvider;
+
+const validator = require('@authenio/samlify-node-xmllint');
+
+// Use samlify
+saml.setSchemaValidator(validator);
 
 // Configure your endpoint for IdP-initiated / SP-initiated SSO
-var sp = ServiceProvider('./metadata_sp.xml');
-var idp = IdentityProvider('./onelogin_metadata_487043.xml');
+const sp = saml.ServiceProvider({
+	metadata: fs.readFileSync(path.resolve(__dirname, 'metadata_sp.xml'))
+});
+// configure the corresponding identity provider
+const idp = saml.IdentityProvider({
+	metadata: fs.readFileSync(path.resolve(__dirname, 'onelogin_metadata_487043.xml'))
+});
 
 // Release the metadata publicly
 router.get('/metadata', function(req, res, next) {
@@ -15,18 +25,20 @@ router.get('/metadata', function(req, res, next) {
 });
 
 // Access URL for implementing SP-init SSO
-router.get('/spinitsso-redirect', function(req, res) {
-	sp.sendLoginRequest(idp,'redirect',function(url) {
-		res.redirect(url);
-	});
+router.get('/spinitsso-redirect', (req, res) => {
+	const { id, context } = sp.createLoginRequest(idp, 'redirect');
+	return res.redirect(context);
 });
 
 // If your application only supports IdP-initiated SSO, just make this route is enough
-// This is the assertion service url where SAML Response is sent to
-router.post('/acs', function(req, res, next) {
-	sp.parseLoginResponse(idp, 'post', req, function(parseResult) {
-		res.send('Validate the SAML Response successfully !');
-	});
-});
+router.post('/acs', (req, res, next) => {
+	sp.parseLoginResponse(idp, 'post', req)
+	.then(parseResult => {
 
+	  // Write your own validation and render function here
+	  res.send('Validate the SAML Response successfully !' + JSON.stringify(parseResult));
+	})
+	.catch(console.error);
+  });
+  
 module.exports = router;

@@ -1,6 +1,6 @@
-# express-saml2-examples
+# samlify-examples
 
-Examples using express-saml2
+Examples using samlify
 
 ### Integrations
 
@@ -17,7 +17,7 @@ $ npm install
 ```bash
 $ npm start
 ```
-and also access http://localhost:3000/spinitsso-redirect or login [OneLogin](https://esaml2.onelogin.com/login) first and click the app `esaml2-example-3000`.
+and also access http://localhost:3000/sso/spinitsso-redirect or login [OneLogin](https://esaml2.onelogin.com/login) first and click the app `esaml2-example-3000`.
 
 The credential for OneLogin testing is:
 
