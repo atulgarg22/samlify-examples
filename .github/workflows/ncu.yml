@@ -1,8 +1,0 @@
-            - name: Npm check updates
-  # You may pin to the exact commit or the version.
-  # uses: Fzwael/ncu-action@a676659792fa61d0b481e252d18768c58a8968cc
-  uses: Fzwael/ncu-action@v1.2.2
-  with:
-    # List of option to pass to ncu
-    ncu-options: # optional, default is 
-          
