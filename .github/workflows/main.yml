@@ -9,4 +9,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - run: npm install
+    - run: npm install -g npm-check-updates
+    - run: ncu
     - uses: MeilCli/npm-update-check-action@v5
